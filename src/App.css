@@ -1,0 +1,59 @@
+html{
+  box-sizing:border-box;
+  /* background-coslor: rgb(0, 172, 252);   */
+  /* background-image: url("https://p0.pikist.com/photos/248/891/sky-blue-cloud-cloudy-background-weather-sunny-wallpaper.jpg"); */
+background-repeat: no-repeat;
+background-image: url("./dark.jpg");
+background-size: 100%;
+}
+*,*:before,*:after{
+  box-sizing: inherit;
+}
+.weather{
+  /* width: 70%; */
+  text-align: center;
+   /* height: 100%;  */
+
+  margin: 30px auto;
+  /* border: 2px solid black; */
+  /* background-color: rgba(60, 60, 124, 0.5); */
+  background-color: rgba(33, 33, 117, 0.5);
+
+  border-radius: 22px;
+  color:white;
+  font-family: cursive;
+
+}
+.container{
+  width: 50%; 
+  height: 80px;
+   /* height: 80%; */
+   font-family: cursive;
+   color:rgb(255, 255, 255);
+
+  text-align: center;
+  margin: 20px auto;
+}
+form input{
+  border-radius: 10px;
+  background-color: white;
+  color:white;
+  height: 30px;
+  margin: 8px;
+  font-family: cursive;
+  font-weight: bolder;
+  width: 44%;
+
+}
+
+button{
+  border-radius: 10px;
+  font-weight: bolder;
+
+  height: 30px;
+  background-color: blue;
+  color: white;
+  font-family: cursive;
+
+
+}
