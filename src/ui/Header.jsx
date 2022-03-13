@@ -1,13 +1,14 @@
 import React from "react";
 
 import { Search } from "../components/Search";
-import { Likes } from "../components/Likes";
+import { Likes } from "./Likes";
 
 export const Header = ({
   getRecipes,
   handleInputChange,
   recipeName,
   handleKeyDown,
+  likes,
 }) => {
   return (
     <header className="header">
@@ -18,7 +19,7 @@ export const Header = ({
         handleInputChange={handleInputChange}
         handleKeyDown={handleKeyDown}
       />
-      <Likes />
+      <Likes likes={likes} />
     </header>
   );
 };

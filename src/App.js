@@ -9,9 +9,24 @@ import {
 
 
 class App extends Component {
- 
+  constructor(props) {
+    super(props);
+    this.state = {
+      storage: JSON.parse(localStorage.getItem('likes')),
+    }
+  }
+
+
+
+
   render() {
-    return <HomePage / >
+    const {
+      storage
+    } = this.state;
+    return <HomePage storage = {
+      storage
+    }
+    / >
   }
 }
 export default App

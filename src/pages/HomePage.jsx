@@ -30,6 +30,7 @@ export class HomePage extends Component {
       isLoadingRecipe: false,
       currentPage: 1,
       shoppingList: [],
+      likes: props.storage,
     };
   }
 
@@ -265,6 +266,26 @@ export class HomePage extends Component {
     this.setState({ shoppingList, showShoppingList: true });
   };
 
+  persistData() {
+    localStorage.setItem("likes", JSON.stringify(this.state.likes));
+  }
+
+  addLike = (currenRecipe) => {
+    const { id, title, author, img } = currenRecipe;
+    const { likes } = this.state;
+    const like = {
+      id,
+      title,
+      author,
+      img,
+    };
+    likes.push(like);
+    this.setState({ likes });
+
+    // Perist data in localStorage
+    this.persistData();
+  };
+
   render() {
     const {
       recipes,
@@ -275,6 +296,7 @@ export class HomePage extends Component {
       currentPage,
       showShoppingList,
       shoppingList,
+      likes,
     } = this.state;
 
     // console.log(currenRecipesData);
@@ -287,6 +309,7 @@ export class HomePage extends Component {
             // recipes={recipes}
             recipeName={recipeName}
             handleKeyDown={this.handleKeyDown}
+            likes={likes}
           />
           <RecipeListView
             recipes={recipes}
@@ -304,6 +327,7 @@ export class HomePage extends Component {
             decreaseServingsIngredients={this.decreaseServingsIngredients}
             increaseServingsIngredients={this.increaseServingsIngredients}
             addToShoppingList={this.addToShoppingList}
+            addLike={this.addLike}
           />
           {/* <Router location={history.location} navigator={history}>
             <Routes>

@@ -6,7 +6,8 @@ export const RecipeView = ({
   isLoadingRecipe,
   decreaseServingsIngredients,
   increaseServingsIngredients,
-  addToShoppingList
+  addToShoppingList,
+  addLike
 }) => {
   return (
     <div className="recipe">
@@ -67,7 +68,7 @@ export const RecipeView = ({
                 </button>
               </div>
             </div>
-            <button className="recipe__love">
+            <button className="recipe__love" onClick={() => addLike(currentRecipe)}>
               <svg className="header__likes">
                 <use href="/assets/img/icons.svg#icon-heart-outlined"></use>
               </svg>
