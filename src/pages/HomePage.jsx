@@ -5,6 +5,7 @@ import { RecipeView } from "../ui/RecipeView";
 import { RecipeShoppingList } from "../ui/RecipeShoppingList";
 import axios from "axios";
 import { key } from "../constants/defaultValues";
+import uniqid from "uniqid";
 // import { Route, Routes, Router } from "react-router-dom";
 // // const { createMemoryHistory } = require("history");
 
@@ -15,9 +16,20 @@ export class HomePage extends Component {
       recipes: [],
       recipeName: "",
       isLoading: false,
-      currentRecipe: false,
+      showShoppingList: false,
+      currentRecipe: {
+        id: "",
+        title: "",
+        author: "",
+        img: "",
+        url: "",
+        time: "",
+        servings: "",
+        ingredients: [],
+      },
       isLoadingRecipe: false,
       currentPage: 1,
+      shoppingList: [],
     };
   }
 
@@ -33,6 +45,7 @@ export class HomePage extends Component {
       alert(error);
     }
   };
+
   parseIngredients = (ingredients) => {
     const unitsLong = [
       "tablespoons",
@@ -109,6 +122,66 @@ export class HomePage extends Component {
     });
     return newIngredients;
   };
+  calcTime = (ingredients) => {
+    const numberingredients = ingredients.length;
+    const periods = Math.ceil(numberingredients / 3);
+    const mealTime = 15 * periods;
+
+    return mealTime;
+  };
+
+  decreaseServingsIngredients = () => {
+    const {
+      currentRecipe: { ingredients },
+    } = this.state;
+    const {
+      currentRecipe: { servings },
+    } = this.state;
+
+    const newIngredients = ingredients.map((objIng) => {
+      objIng.count = parseFloat(
+        objIng.count * (servings - 1 / servings)
+      ).toFixed(2);
+      return objIng;
+    });
+
+    console.log("new ingredients : ", newIngredients);
+
+    this.setState((previousState) => ({
+      // ...currentRecipe,
+      currentRecipe: {
+        ...previousState.currentRecipe,
+        servings: previousState.currentRecipe.servings - 1,
+        ingredients: newIngredients,
+      },
+      // servings: previousState.currentRecipe.servings + 1,
+    }));
+  };
+
+  increaseServingsIngredients = () => {
+    const {
+      currentRecipe: { ingredients },
+    } = this.state;
+    const {
+      currentRecipe: { servings },
+    } = this.state;
+
+    const newIngredients = ingredients.map((objIng) => {
+      objIng.count = objIng.count * (servings + 1 / servings);
+      return objIng;
+    });
+    console.log("new ingredients : ", newIngredients);
+
+    this.setState((previousState) => ({
+      // ...currentRecipe,
+      currentRecipe: {
+        ...previousState.currentRecipe,
+        servings: previousState.currentRecipe.servings + 1,
+        ingredients: newIngredients,
+      },
+      // servings: previousState.currentRecipe.servings + 1,
+    }));
+  };
 
   getRecipe = async (id) => {
     this.setState({ isLoadingRecipe: true });
@@ -120,11 +193,16 @@ export class HomePage extends Component {
         res.data.recipe.ingredients
       );
 
+      const mealTime = this.calcTime(ingredients);
+
       const currentRecipe = {
+        id: res.data.recipe.recipe_id,
         title: res.data.recipe.title,
         author: res.data.recipe.publisher,
         img: res.data.recipe.image_url,
         url: res.data.recipe.source_url,
+        time: mealTime,
+        servings: 4,
         ingredients: ingredients,
       };
       //   this.parseIngredients();
@@ -141,11 +219,19 @@ export class HomePage extends Component {
     this.setState({ ...this.state, recipeName });
   };
   handleKeyDown = (e) => {
-    const {recipeName} = this.state;
-    if(e.keyCode === 13){
+    const { recipeName } = this.state;
+    if (e.keyCode === 13) {
       this.getRecipes(recipeName);
     }
+  };
 
+  deleteItem = (id) => {
+    const { shoppingList } = this.state;
+    const index = shoppingList.findIndex((el) => el.id === id);
+    // [2,4,8] splice(1, 2) -> returns [4, 8], original array is [2]
+    // [2,4,8] slice(1, 2) -> returns 4, original array is [2,4,8]
+    shoppingList.splice(index, 1);
+    this.setState({ shoppingList });
   };
 
   getPageRecipes = (recipes, currentPage, resultsPerPage) => {
@@ -159,6 +245,25 @@ export class HomePage extends Component {
     //  const {currentPage} = this.state
     this.setState({ ...this.state, currentPage: Page });
   };
+  addToShoppingList = () => {
+    console.log("inside add to shopping list");
+    const {
+      currentRecipe: { ingredients },
+      shoppingList,
+    } = this.state;
+
+    const newItemList = ingredients.map((el) => {
+      return {
+        id: uniqid(),
+        count: el.count,
+        unit: el.unit,
+        ingredient: el.ingredient,
+      };
+    });
+
+    shoppingList.push(...newItemList);
+    this.setState({ shoppingList, showShoppingList: true });
+  };
 
   render() {
     const {
@@ -168,6 +273,8 @@ export class HomePage extends Component {
       currentRecipe,
       isLoadingRecipe,
       currentPage,
+      showShoppingList,
+      shoppingList,
     } = this.state;
 
     // console.log(currenRecipesData);
@@ -179,7 +286,7 @@ export class HomePage extends Component {
             handleInputChange={this.handleInputChange}
             // recipes={recipes}
             recipeName={recipeName}
-            handleKeyDown = {this.handleKeyDown}
+            handleKeyDown={this.handleKeyDown}
           />
           <RecipeListView
             recipes={recipes}
@@ -188,18 +295,26 @@ export class HomePage extends Component {
             getPageRecipes={this.getPageRecipes}
             currentPage={currentPage}
             changePageHandler={this.changePageHandler}
+            currentRecipe={currentRecipe}
           />
 
           <RecipeView
             currentRecipe={currentRecipe}
             isLoadingRecipe={isLoadingRecipe}
+            decreaseServingsIngredients={this.decreaseServingsIngredients}
+            increaseServingsIngredients={this.increaseServingsIngredients}
+            addToShoppingList={this.addToShoppingList}
           />
           {/* <Router location={history.location} navigator={history}>
             <Routes>
              <Route component=} path ='/#' />
            </Routes>
          </Router> */}
-          <RecipeShoppingList />
+          <RecipeShoppingList
+            shoppingList={shoppingList}
+            showShoppingList={showShoppingList}
+            deleteItem={this.deleteItem}
+          />
         </div>
       </>
     );

@@ -1,7 +1,13 @@
 import React from "react";
 import { Ingredient } from "../components/Ingredient";
 
-export const RecipeView = ({ currentRecipe, isLoadingRecipe }) => {
+export const RecipeView = ({
+  currentRecipe,
+  isLoadingRecipe,
+  decreaseServingsIngredients,
+  increaseServingsIngredients,
+  addToShoppingList
+}) => {
   return (
     <div className="recipe">
       {isLoadingRecipe ? (
@@ -10,7 +16,7 @@ export const RecipeView = ({ currentRecipe, isLoadingRecipe }) => {
             <use href="/assets/img/icons.svg#icon-cw"></use>
           </svg>
         </div>
-      ) : currentRecipe ? (
+      ) : currentRecipe.id ? (
         <>
           <figure className="recipe__fig">
             <img
@@ -43,12 +49,18 @@ export const RecipeView = ({ currentRecipe, isLoadingRecipe }) => {
               <span className="recipe__info-text"> servings</span>
 
               <div className="recipe__info-buttons">
-                <button className="btn-tiny btn-decrease">
+                <button
+                  className="btn-tiny btn-decrease"
+                  onClick={() => decreaseServingsIngredients()}
+                >
                   <svg>
                     <use href="/assets/img/icons.svg#icon-circle-with-minus"></use>
                   </svg>
                 </button>
-                <button className="btn-tiny btn-increase">
+                <button
+                  className="btn-tiny btn-increase"
+                  onClick={() => increaseServingsIngredients()}
+                >
                   <svg>
                     <use href="/assets/img/icons.svg#icon-circle-with-plus"></use>
                   </svg>
@@ -69,7 +81,10 @@ export const RecipeView = ({ currentRecipe, isLoadingRecipe }) => {
               ))}
             </ul>
 
-            <button className="btn-small recipe__btn recipe__btn--add">
+            <button
+              className="btn-small recipe__btn recipe__btn--add"
+              onClick={() => addToShoppingList()}
+            >
               <svg className="search__icon">
                 <use href="/assets/img/icons.svg#icon-shopping-cart"></use>
               </svg>

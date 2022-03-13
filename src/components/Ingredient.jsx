@@ -3,6 +3,7 @@ import { Fraction } from "fractional";
 
 export const Ingredient = ({ ingredient }) => {
   const formatCount = (count) => {
+    console.log('inside format function')
     if (count) {
       // count = 2.5 --> 5/2 --> 2 1/2
       // count = 0.5 --> 1/2
